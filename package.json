@@ -1,0 +1,23 @@
+{
+  "name": "drain",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hrushikesh44/drain.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hrushikesh44/drain/issues"
+  },
+  "homepage": "https://github.com/hrushikesh44/drain#readme",
+  "dependencies": {
+    "typescript": "^5.7.3"
+  }
+}
