@@ -1,16 +1,19 @@
 import express from  "express";
 import cors from "cors";
-import { UserModel } from "./db";
+import { ContentModel, LinkModel, UserModel } from "./db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
+import { random } from "./utils";
+import ts from "typescript";
+import mongoose from "mongoose";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.post('api/v1/signup', async (req, res) => {
+app.post('signup', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -29,7 +32,7 @@ app.post('api/v1/signup', async (req, res) => {
     }
 })
 
-app.post('api/v1/signin', async(req, res) => {
+app.post('signin', async(req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -51,4 +54,125 @@ app.post('api/v1/signin', async(req, res) => {
     }
 })
 
-app.listen(3000);
+app.post('content', userMiddleware, async(req, res) => {
+    const link = req.body.link;
+    const type = req.body.type;
+    const title = req.body.title;
+
+    await ContentModel.create({
+        link,
+        type,
+        title,
+        userId: req.userId,
+        tags: []
+    })
+
+    res.status(200).json({
+        message: "content added"
+    })
+})
+
+app.get('content', userMiddleware, async(req, res) => {
+    const userId = req.userId;
+
+    const content = await ContentModel.find({
+        userId
+    }).populate("userId", "username")
+
+    res.json({
+        content
+    })
+})
+
+app.delete('content', userMiddleware, async(req, res) => {
+    const contentId = req.body.contentId;
+
+    await ContentModel.deleteMany({
+        contentId,
+        userId: req.userId
+    })
+
+    res.json({
+        message: "content deleted"
+    })
+})
+
+app.post('drain/share', userMiddleware, async(req, res) => {
+    const share = req.body.share;
+
+    if(share) {
+        const existingLink = await LinkModel.findOne({
+            userId: req.userId
+        })
+
+        if(existingLink){
+
+            res.json({
+                hash: existingLink.hash
+            })
+            return
+        }
+
+        const hash = random(10);
+        await LinkModel.create({
+            userId: req.userId,
+            hash
+        })
+
+        res.json({
+            hash
+        })
+    } else {
+        await LinkModel.deleteOne({
+            userId: req.userId
+        })
+
+        res.json({
+            message: "link removed"
+        })
+    }
+})
+
+app.get('drain/:shareLink', async(req, res) => {
+    const hash = req.params.shareLink;
+
+    const link = await LinkModel.findOne({
+        hash
+    })
+
+    if(!link){
+        res.status(411).json({
+            message:"link does not exist"
+        })
+        return
+    }
+
+    const content = await ContentModel.find({
+        userId: link?.userId
+    })
+
+    const user = await UserModel.find({
+        _id: link?.userId
+    })
+
+    if(!user){
+        res.status(411).json({
+            message: "User not found"
+        })
+        return
+    }
+
+    res.json({
+        //@ts-ignore
+        username: user.username,
+        content: content
+    })
+})
+
+async function main() {
+    await mongoose.connect("mongodb+srv://hrushikesh44:dyRez7HpcxthsJdV@cluster0.2lasb.mongodb.net/drain");
+    app.listen(3000);
+}
+
+main();
+
