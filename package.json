@@ -19,6 +19,7 @@
   "homepage": "https://github.com/hrushikesh44/drain#readme",
   "dependencies": {
     "@types/cors": "^2.8.17",
+    "@types/dotenv": "^8.2.3",
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.8",
     "cors": "^2.8.5",

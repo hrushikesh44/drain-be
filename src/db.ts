@@ -1,6 +1,8 @@
 import mongoose, { Schema, model } from "mongoose";
+//@ts-ignore
+var url: string = process.env.MONGODB_URI
 
-mongoose.connect("mongodb+srv://hrushikesh44:dyRez7HpcxthsJdV@cluster0.2lasb.mongodb.net/drain");
+mongoose.connect(url);
 
 const UserSchema = new Schema({
     username: {type: String, unique: true},

@@ -5,15 +5,19 @@ import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "./config";
 import { userMiddleware } from "./middleware";
 import { random } from "./utils";
-import ts from "typescript";
+import dotenv from "dotenv";
 import mongoose from "mongoose";
 
+
 const app = express();
+dotenv.config();
+//@ts-ignore
+const url: string = process.env.MONGODB_URI;
 
 app.use(express.json());
 app.use(cors());
 
-app.post('signup', async (req, res) => {
+app.post('/signup', async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -54,7 +58,7 @@ app.post('signin', async(req, res) => {
     }
 })
 
-app.post('content', userMiddleware, async(req, res) => {
+app.post('/content', userMiddleware, async(req, res) => {
     const link = req.body.link;
     const type = req.body.type;
     const title = req.body.title;
@@ -72,7 +76,7 @@ app.post('content', userMiddleware, async(req, res) => {
     })
 })
 
-app.get('content', userMiddleware, async(req, res) => {
+app.get('/content', userMiddleware, async(req, res) => {
     const userId = req.userId;
 
     const content = await ContentModel.find({
@@ -84,7 +88,7 @@ app.get('content', userMiddleware, async(req, res) => {
     })
 })
 
-app.delete('content', userMiddleware, async(req, res) => {
+app.delete('/content', userMiddleware, async(req, res) => {
     const contentId = req.body.contentId;
 
     await ContentModel.deleteMany({
@@ -97,7 +101,7 @@ app.delete('content', userMiddleware, async(req, res) => {
     })
 })
 
-app.post('drain/share', userMiddleware, async(req, res) => {
+app.post('/drain/share', userMiddleware, async(req, res) => {
     const share = req.body.share;
 
     if(share) {
@@ -133,7 +137,7 @@ app.post('drain/share', userMiddleware, async(req, res) => {
     }
 })
 
-app.get('drain/:shareLink', async(req, res) => {
+app.get('/drain/:shareLink', async(req, res) => {
     const hash = req.params.shareLink;
 
     const link = await LinkModel.findOne({
@@ -170,7 +174,7 @@ app.get('drain/:shareLink', async(req, res) => {
 })
 
 async function main() {
-    await mongoose.connect("mongodb+srv://hrushikesh44:dyRez7HpcxthsJdV@cluster0.2lasb.mongodb.net/drain");
+    await mongoose.connect(url);
     app.listen(3000);
 }
 
