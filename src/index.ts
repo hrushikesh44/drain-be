@@ -11,7 +11,6 @@ import mongoose from "mongoose";
 
 const app = express();
 dotenv.config();
-//@ts-ignore
 const url: string = process.env.MONGODB_URI;
 
 app.use(express.json());
@@ -36,7 +35,7 @@ app.post('/signup', async (req, res) => {
     }
 })
 
-app.post('signin', async(req, res) => {
+app.post('/signin', async(req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
@@ -91,7 +90,7 @@ app.get('/content', userMiddleware, async(req, res) => {
 app.delete('/content', userMiddleware, async(req, res) => {
     const contentId = req.body.contentId;
 
-    await ContentModel.deleteMany({
+    await ContentModel.deleteOne({
         contentId,
         userId: req.userId
     })
@@ -167,8 +166,7 @@ app.get('/drain/:shareLink', async(req, res) => {
     }
 
     res.json({
-        //@ts-ignore
-        username: user.username,
+        username: user,
         content: content
     })
 })

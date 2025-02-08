@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from "mongoose";
-//@ts-ignore
-var url: string = process.env.MONGODB_URI
+
+const url: string = process.env.MONGODB_URI ;
 
 mongoose.connect(url);
 
