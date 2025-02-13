@@ -7,8 +7,7 @@ import { userMiddleware } from "./middleware";
 import { random } from "./utils";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import z from "zod"
-
+import { z } from "zod"
 
 const app = express();
 dotenv.config();
@@ -112,14 +111,15 @@ app.get('/content', userMiddleware, async(req, res) => {
     })
 })
 
-app.delete('/content', userMiddleware, async(req, res) => {
+app.put('/content', userMiddleware, async(req, res) => {
     const contentId = req.body.contentId;
 
-    await ContentModel.deleteOne({
-        contentId,
+    await ContentModel.findOneAndDelete({
+        _id: contentId
+    },{
         userId: req.userId
     })
-
+    
     res.json({
         message: "content deleted"
     })
