@@ -172,15 +172,15 @@ app.get('/drain/:shareLink', async(req, res) => {
         res.status(411).json({
             message:"link does not exist"
         })
-        return
+        return;
     }
 
     const content = await ContentModel.find({
-        userId: link?.userId
+        userId: link.userId
     })
 
-    const user = await UserModel.find({
-        _id: link?.userId
+    const user = await UserModel.findOne({
+        _id: link.userId
     })
 
     if(!user){
@@ -191,7 +191,7 @@ app.get('/drain/:shareLink', async(req, res) => {
     }
 
     res.json({
-        username: user,
+        username: user.username,
         content: content
     })
 })
