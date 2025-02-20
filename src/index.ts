@@ -73,7 +73,9 @@ app.post('/signin', async(req, res) => {
             id: user._id
         }, JWT_PASSWORD)
 
-        res.json(token)
+        res.json({
+            token: token
+        })
     } else{
         res.status(411).json({
             message: "Invalid Credentials"
