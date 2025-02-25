@@ -199,7 +199,7 @@ app.get('/drain/:shareLink', async(req, res) => {
 })
 
 async function main() {
-    await mongoose.connect(url);
+    await mongoose.connect("mongodb+srv://hrushikesh44:dCkf2VMypSsBKha@cluster0.2lasb.mongodb.net/drain");
     app.listen(3000);
 }
 
